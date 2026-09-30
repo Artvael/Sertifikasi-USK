@@ -10,7 +10,7 @@ if(isset($_POST['login'])) {
     $data = $stmt->fetch();
 
     // Validasi input dan cek password
-    if($data && password_verify($pass, $data['password'])) {
+   if($data && $pass == $data['password']) {
         $_SESSION['admin'] = $data['nama'];
         header("Location: dashboard.php");
         exit;
