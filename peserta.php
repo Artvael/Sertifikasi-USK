@@ -13,6 +13,15 @@ if (isset($_GET['hapus'])) {
     $koneksi->prepare("DELETE FROM peserta WHERE id_peserta = ?")->execute([$_GET['hapus']]);
     header("Location: peserta.php"); exit;
 }
+
+// Logika Pencarian
+$keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
+if ($keyword !== '') {
+    $stmt = $koneksi->prepare("SELECT * FROM peserta WHERE nama_peserta LIKE ? OR email LIKE ? OR telepon LIKE ?");
+    $stmt->execute(["%$keyword%", "%$keyword%", "%$keyword%"]);
+} else {
+    $stmt = $koneksi->query("SELECT * FROM peserta");
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -34,19 +43,31 @@ if (isset($_GET['hapus'])) {
             <div class="col-2"><button type="submit" name="tambah" class="btn btn-success w-100">Tambah</button></div>
         </form>
 
+        <!-- Form Pencarian -->
+        <form method="GET" class="row g-2 mb-3">
+            <div class="col-10">
+                <input type="text" name="keyword" class="form-control" placeholder="Cari berdasarkan nama, email, atau telepon..." value="<?= htmlspecialchars($keyword) ?>">
+            </div>
+            <div class="col-2 d-flex gap-1">
+                <button type="submit" class="btn btn-primary w-100">Cari</button>
+                <?php if ($keyword !== ''): ?>
+                    <a href="peserta.php" class="btn btn-secondary">Reset</a>
+                <?php endif; ?>
+            </div>
+        </form>
+
         <table class="table table-bordered">
             <thead class="table-dark"><tr><th>No</th><th>Nama</th><th>Email</th><th>Telepon</th><th>Aksi</th></tr></thead>
             <tbody>
                 <?php 
                 $no = 1;
-                $stmt = $koneksi->query("SELECT * FROM peserta");
                 while($row = $stmt->fetch()): 
                 ?>
                 <tr>
                     <td><?= $no++ ?></td>
-                    <td><?= $row['nama_peserta'] ?></td>
-                    <td><?= $row['email'] ?></td>
-                    <td><?= $row['telepon'] ?></td>
+                    <td><?= htmlspecialchars($row['nama_peserta']) ?></td>
+                    <td><?= htmlspecialchars($row['email']) ?></td>
+                    <td><?= htmlspecialchars($row['telepon']) ?></td>
                     <td>
                         <a href="detail_peserta.php?id=<?= $row['id_peserta'] ?>" class="btn btn-sm btn-info">Detail</a>
                         <a href="edit_peserta.php?id=<?= $row['id_peserta'] ?>" class="btn btn-sm btn-warning">Edit</a>

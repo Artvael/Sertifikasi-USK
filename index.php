@@ -11,7 +11,7 @@ if(isset($_POST['login'])) {
 
     // Validasi input dan cek password
    if($data && $pass == $data['password']) {
-        $_SESSION['admin'] = $data['nama'];
+        $_SESSION['admin'] = $data['username'];
         header("Location: dashboard.php");
         exit;
     } else {
