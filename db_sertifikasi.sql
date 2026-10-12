@@ -40,6 +40,8 @@ INSERT INTO `skema` (`id_skema`, `kode_skema`, `nama_skema`) VALUES
 CREATE TABLE IF NOT EXISTS `peserta` (
   `id_peserta` int(11) NOT NULL AUTO_INCREMENT,
   `nama_peserta` varchar(100) NOT NULL,
+  `username` varchar(50) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
   `email` varchar(100) NOT NULL,
   `telepon` varchar(15) NOT NULL,
   `id_skema` int(11) NOT NULL,
@@ -49,8 +51,7 @@ CREATE TABLE IF NOT EXISTS `peserta` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data untuk tabel `peserta`
-INSERT INTO `peserta` (`id_peserta`, `nama_peserta`, `email`, `telepon`, `id_skema`) VALUES
-(1, 'Miko', 'Mikoangelo@gmail.com', '087890208776', 2),
-(2, 'Dwi', 'Dwi@gmail.com', '087820908665', 2),
-(3, 'Maydixiun', 'Cison@gmail.com', '0199288281821', 3),
-(4, 'maydixiun', 'Cison@gmail.com', '087820908665', 2);
+INSERT INTO `peserta` (`id_peserta`, `nama_peserta`, `username`, `password`, `email`, `telepon`, `id_skema`) VALUES
+(1, 'Miko', 'miko', '123', 'Mikoangelo@gmail.com', '087890208776', 2),
+(2, 'Dwi', 'dwi', '123', 'Dwi@gmail.com', '087820908665', 2),
+(3, 'Maydixiun', 'maydixiun', '123', 'Cison@gmail.com', '0199288281821', 3);
