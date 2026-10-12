@@ -1,34 +1,49 @@
 <?php
-session_start();
 require 'koneksi.php';
+// Proteksi halaman: Wajib login admin
 if (!isset($_SESSION['admin'])) { header("Location: index.php"); exit; }
 
-// Tambah & Hapus dalam satu blok ringkas
+// 1. Logika Tambah Data Peserta
 if (isset($_POST['tambah'])) {
     $koneksi->prepare("INSERT INTO peserta (nama_peserta, email, telepon, id_skema) VALUES (?, ?, ?, ?)")
             ->execute([$_POST['nama_peserta'], $_POST['email'], $_POST['telepon'], $_POST['id_skema']]);
-    header("Location: peserta.php"); exit;
-}
-if (isset($_GET['hapus'])) {
-    $koneksi->prepare("DELETE FROM peserta WHERE id_peserta = ?")->execute([$_GET['hapus']]);
-    header("Location: peserta.php"); exit;
+    header("Location: peserta.php");
+    exit;
 }
 
-// Logika Pencarian
+// 2. Logika Hapus Data Peserta
+if (isset($_GET['hapus'])) {
+    $koneksi->prepare("DELETE FROM peserta WHERE id_peserta = ?")->execute([$_GET['hapus']]);
+    header("Location: peserta.php");
+    exit;
+}
+
+// 3. Logika Pencarian & Tampil Data
 $keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
 if ($keyword !== '') {
+    // Cari berdasarkan nama, email, atau telepon menggunakan operator LIKE
     $stmt = $koneksi->prepare("SELECT * FROM peserta WHERE nama_peserta LIKE ? OR email LIKE ? OR telepon LIKE ?");
     $stmt->execute(["%$keyword%", "%$keyword%", "%$keyword%"]);
 } else {
+    // Tampilkan semua data jika tidak ada pencarian
     $stmt = $koneksi->query("SELECT * FROM peserta");
 }
 ?>
 <!DOCTYPE html>
 <html>
-<head><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"></head>
+<head>
+    <title>Kelola Peserta</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 <body class="p-4">
     <div class="container">
-        <h2>Data Peserta <a href="logout.php" class="btn btn-sm btn-danger float-end">Logout</a></h2>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Data Peserta</h2>
+            <div class="d-flex gap-2">
+                <a href="dashboard.php" class="btn btn-secondary">Kembali ke Dashboard</a>
+                <a href="logout.php" class="btn btn-danger">Logout</a>
+            </div>
+        </div>
         
         <!-- Form Tambah Cepat -->
         <form method="POST" class="row g-2 mb-3">

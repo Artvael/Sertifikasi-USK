@@ -36,6 +36,7 @@ if(isset($_POST['simpan'])) {
         $stmt->execute([$kode, $nama]);
     }
     header("Location: skema.php");
+    exit;
 }
 
 // 3. Logika Hapus Data
@@ -43,6 +44,7 @@ if(isset($_GET['hapus'])) {
     $stmt = $koneksi->prepare("DELETE FROM skema WHERE id_skema = ?");
     $stmt->execute([$_GET['hapus']]);
     header("Location: skema.php");
+    exit;
 }
 ?>
 <!DOCTYPE html>

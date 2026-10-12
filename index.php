@@ -1,17 +1,25 @@
 <?php
 require 'koneksi.php';
 
-if(isset($_POST['login'])) {
+// Jika admin sudah login, langsung arahkan ke dashboard
+if (isset($_SESSION['admin'])) {
+    header("Location: dashboard.php");
+    exit;
+}
+
+// Proses form login saat tombol diklik
+if (isset($_POST['login'])) {
     $user = $_POST['username'];
     $pass = $_POST['password'];
 
+    // Prepared Statement: Mengamankan query dari SQL Injection
     $stmt = $koneksi->prepare("SELECT * FROM admin WHERE username = ?");
     $stmt->execute([$user]);
     $data = $stmt->fetch();
 
-    // Validasi input dan cek password
-   if($data && $pass == $data['password']) {
-        $_SESSION['admin'] = $data['username'];
+    // Validasi data akun dan kecocokan password
+    if ($data && $pass == $data['password']) {
+        $_SESSION['admin'] = $data['username']; // Simpan session login
         header("Location: dashboard.php");
         exit;
     } else {

@@ -1,21 +1,33 @@
 <?php
-session_start();
 require 'koneksi.php';
+// Proteksi halaman: Wajib login admin
+if (!isset($_SESSION['admin'])) { header("Location: index.php"); exit; }
+
+// Pastikan ada parameter ID di URL
 if (!isset($_GET['id'])) { header("Location: peserta.php"); exit; }
 
+// Proses Update saat tombol Simpan diklik
 if (isset($_POST['update'])) {
     $koneksi->prepare("UPDATE peserta SET nama_peserta=?, email=?, telepon=?, id_skema=? WHERE id_peserta=?")
             ->execute([$_POST['nama_peserta'], $_POST['email'], $_POST['telepon'], $_POST['id_skema'], $_GET['id']]);
-    header("Location: peserta.php"); exit;
+    header("Location: peserta.php");
+    exit;
 }
 
+// Ambil data peserta lama berdasarkan ID
 $p = $koneksi->prepare("SELECT * FROM peserta WHERE id_peserta = ?");
 $p->execute([$_GET['id']]);
 $row = $p->fetch();
+
+// Jika data tidak ditemukan
+if (!$row) { header("Location: peserta.php"); exit; }
 ?>
 <!DOCTYPE html>
 <html>
-<head><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"></head>
+<head>
+    <title>Edit Peserta</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 <body class="p-4">
     <div class="container" style="max-width: 400px;">
         <h3>Edit Peserta</h3>

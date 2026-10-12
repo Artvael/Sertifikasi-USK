@@ -1,14 +1,25 @@
 <?php
 require 'koneksi.php';
+// Proteksi halaman: Wajib login admin
+if (!isset($_SESSION['admin'])) { header("Location: index.php"); exit; }
+
+// Pastikan ada parameter ID di URL
 if (!isset($_GET['id'])) { header("Location: peserta.php"); exit; }
 
+// Query JOIN untuk mengambil data peserta beserta nama skemanya
 $stmt = $koneksi->prepare("SELECT p.*, s.nama_skema FROM peserta p JOIN skema s ON p.id_skema = s.id_skema WHERE p.id_peserta = ?");
 $stmt->execute([$_GET['id']]);
 $row = $stmt->fetch();
+
+// Jika data peserta tidak ditemukan di database
+if (!$row) { header("Location: peserta.php"); exit; }
 ?>
 <!DOCTYPE html>
 <html>
-<head><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"></head>
+<head>
+    <title>Detail Peserta</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 <body class="p-4">
     <div class="container" style="max-width: 500px;">
         <div class="card p-3">
