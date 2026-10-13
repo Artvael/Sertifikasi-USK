@@ -1,3 +1,16 @@
+<?php
+require 'koneksi.php';
+
+// Jika sudah login, langsung arahkan ke dashboard masing-masing
+if (isset($_SESSION['admin'])) {
+    header("Location: dashboard.php");
+    exit;
+}
+if (isset($_SESSION['user'])) {
+    header("Location: dashboard_user.php");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>

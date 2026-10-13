@@ -1,6 +1,6 @@
 <?php
 require 'koneksi.php';
-if(!isset($_SESSION['admin'])) { header("Location: index.php"); exit; }
+if(!isset($_SESSION['admin'])) { header("Location: login.php"); exit; }
 
 // Variable penampung awal untuk mode Tambah
 $id_edit = '';

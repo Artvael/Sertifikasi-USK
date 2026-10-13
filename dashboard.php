@@ -1,7 +1,7 @@
 <?php
 require 'koneksi.php';
 // Tendang kembali ke login jika belum ada session
-if(!isset($_SESSION['admin'])) { header("Location: index.php"); exit; }
+if(!isset($_SESSION['admin'])) { header("Location: login.php"); exit; }
 
 // Menghitung jumlah data untuk indikator ringkasan
 $jml_peserta = $koneksi->query("SELECT COUNT(*) FROM peserta")->fetchColumn();

@@ -1,7 +1,7 @@
 <?php
 require 'koneksi.php';
 // Proteksi halaman: Wajib login admin
-if (!isset($_SESSION['admin'])) { header("Location: index.php"); exit; }
+if (!isset($_SESSION['admin'])) { header("Location: login.php"); exit; }
 
 // Pastikan ada parameter ID di URL
 if (!isset($_GET['id'])) { header("Location: peserta.php"); exit; }

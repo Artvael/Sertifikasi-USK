@@ -1,14 +1,28 @@
 <?php
 require 'koneksi.php';
 // Proteksi halaman: Wajib login admin
-if (!isset($_SESSION['admin'])) { header("Location: index.php"); exit; }
+if (!isset($_SESSION['admin'])) { header("Location: login.php"); exit; }
 
 // 1. Logika Tambah Data Peserta
 if (isset($_POST['tambah'])) {
-    $koneksi->prepare("INSERT INTO peserta (nama_peserta, email, telepon, id_skema) VALUES (?, ?, ?, ?)")
-            ->execute([$_POST['nama_peserta'], $_POST['email'], $_POST['telepon'], $_POST['id_skema']]);
-    header("Location: peserta.php");
-    exit;
+    $nama     = trim($_POST['nama_peserta']);
+    $email    = trim($_POST['email']);
+    $telepon  = trim($_POST['telepon']);
+    $id_skema = $_POST['id_skema'];
+
+    // Validasi nama hanya huruf & telepon max 15 digit
+    if (!preg_match("/^[a-zA-Z\s]+$/", $nama)) {
+        header("Location: peserta.php?error=nama_invalid");
+        exit;
+    } elseif (!preg_match("/^[0-9]{10,15}$/", $telepon)) {
+        header("Location: peserta.php?error=telepon_invalid");
+        exit;
+    } else {
+        $koneksi->prepare("INSERT INTO peserta (nama_peserta, email, telepon, id_skema) VALUES (?, ?, ?, ?)")
+                ->execute([$nama, $email, $telepon, $id_skema]);
+        header("Location: peserta.php?pesan=tambah_sukses");
+        exit;
+    }
 }
 
 // 2. Logika Hapus Data Peserta
@@ -44,12 +58,34 @@ if ($keyword !== '') {
                 <a href="logout.php" class="btn btn-danger">Logout</a>
             </div>
         </div>
+
+        <!-- Notifikasi Pesan -->
+        <?php if (isset($_GET['error']) && $_GET['error'] == 'nama_invalid'): ?>
+            <div class="alert alert-danger alert-dismissible fade show">Nama hanya boleh berupa huruf dan spasi, tidak boleh angka!</div>
+        <?php elseif (isset($_GET['error']) && $_GET['error'] == 'telepon_invalid'): ?>
+            <div class="alert alert-danger alert-dismissible fade show">Nomor telepon harus berupa angka antara 10 sampai 15 digit!</div>
+        <?php elseif (isset($_GET['pesan']) && $_GET['pesan'] == 'tambah_sukses'): ?>
+            <div class="alert alert-success alert-dismissible fade show">Data peserta berhasil ditambahkan!</div>
+        <?php elseif (isset($_GET['pesan']) && $_GET['pesan'] == 'update_sukses'): ?>
+            <div class="alert alert-success alert-dismissible fade show">Data peserta berhasil diperbarui!</div>
+        <?php endif; ?>
         
         <!-- Form Tambah Cepat -->
         <form method="POST" class="row g-2 mb-3">
-            <div class="col-3"><input type="text" name="nama_peserta" class="form-control" placeholder="Nama" required></div>
+            <div class="col-3">
+                <input type="text" name="nama_peserta" class="form-control" placeholder="Nama (Huruf saja)" required
+                       pattern="[a-zA-Z\s]+"
+                       title="Nama hanya boleh berupa huruf dan spasi, tidak boleh mengandung angka"
+                       oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')">
+            </div>
             <div class="col-3"><input type="email" name="email" class="form-control" placeholder="Email" required></div>
-            <div class="col-2"><input type="text" name="telepon" class="form-control" placeholder="Telepon" required></div>
+            <div class="col-2">
+                <input type="tel" name="telepon" class="form-control" placeholder="Telepon (Max 15 digit)" required
+                       maxlength="15" minlength="10"
+                       pattern="[0-9]{10,15}"
+                       title="Nomor telepon harus berupa angka antara 10 hingga 15 digit"
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)">
+            </div>
             <div class="col-2">
                 <select name="id_skema" class="form-select" required>
                     <?php foreach($koneksi->query("SELECT * FROM skema") as $s) echo "<option value='{$s['id_skema']}'>{$s['nama_skema']}</option>"; ?>

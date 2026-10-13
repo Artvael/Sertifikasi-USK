@@ -76,6 +76,9 @@ if (isset($_POST['login'])) {
             <p class="text-center text-muted mt-3 mb-0">
                 Belum punya akun? <a href="register.php">Daftar Akun</a>
             </p>
+            <div class="text-center mt-2">
+                <a href="index.php" class="text-decoration-none small text-secondary">← Kembali ke Beranda</a>
+            </div>
         </div>
     </div>
 </body>
